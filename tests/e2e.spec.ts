@@ -41,3 +41,22 @@ test('initial и next (hot и iced)', async ({ request }) => {
   await assertApiShape(request, 'GET', '/api/initial?type=iced');
   await assertApiShape(request, 'POST', '/api/next?type=iced');
 });
+
+// Кеш: после POST /api/next тот же id должен вернуться из /api/initial
+async function getJson(ctx: APIRequestContext, method: 'GET' | 'POST', url: string) {
+  const res = method === 'GET' ? await ctx.get(url) : await ctx.post(url);
+  expect(res.ok()).toBeTruthy();
+  return res.json();
+}
+
+test('кеш возвращает последнюю карточку: hot', async ({ request }) => {
+  const next = await getJson(request, 'POST', '/api/next?type=hot');
+  const init = await getJson(request, 'GET', '/api/initial?type=hot');
+  expect(init.id).toBe(next.id);
+});
+
+test('кеш возвращает последнюю карточку: iced', async ({ request }) => {
+  const next = await getJson(request, 'POST', '/api/next?type=iced');
+  const init = await getJson(request, 'GET', '/api/initial?type=iced');
+  expect(init.id).toBe(next.id);
+});
