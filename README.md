@@ -45,30 +45,9 @@ npm run test:e2e  # e2e тесты (Playwright)
 
 ## Кеширование
 - В памяти процесса (LRU) — быстрый путь.
-- Persist в файловой системе: `.server-cache/last_card.hot.json` и `.server-cache/last_card.iced.json`.
-- Дополнительно (опционально) поддержан Vercel KV для кросс-инстанс персистентности.
+- Persist в файловой системе: `.server-cache/last_card.hot.json` и `.server-cache/last_card.iced.json`.перезапусками. 
 
-> На бессерверных платформах файловый кеш не гарантирован между деплоями/перезапусками. Для стабильной персистентности используйте Vercel KV.
 
-## Деплой на Vercel
-1. Подготовьте репозиторий (GitHub/GitLab/Bitbucket).
-2. Войдите в https://vercel.com и нажмите "New Project" → "Import" ваш репозиторий.
-3. Vercel автоматически определит фреймворк: "SvelteKit".
-   - Build Command: `npm run build`
-   - Output: автоматически (адаптер auto)
-4. (Опционально) Настройте переменные окружения для Vercel KV, чтобы кеш переживал перезапуски и масштабирование:
-   - `KV_REST_API_URL`
-   - `KV_REST_API_TOKEN`
-   
-   Добавьте их в Settings → Environment Variables (Production/Preview/Development по необходимости).
-5. Нажмите Deploy. После билда получите URL вида `https://<your-vercel-app>.vercel.app`.
-
-### Проверка после деплоя
-- Откройте главную страницу — должна отобразиться 1 карточка сразу (SSR).
-- Нажмите «Добавить карточку» — должна добавиться новая карточка, кнопка временно заблокируется.
-- Попробуйте API напрямую:
-  - `GET https://<your-vercel-app>.vercel.app/api/initial?type=hot`
-  - `POST https://<your-vercel-app>.vercel.app/api/next?type=iced`
 
 ### Замечания по продакшену
 - Без Vercel KV сервер может терять кеш между рестартами (например, при ребалансе). Подключение KV решает этот кейс.
